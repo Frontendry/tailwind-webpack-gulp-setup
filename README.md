@@ -1,39 +1,39 @@
-## I&M Bank Tailwind HTMLs:
+## Tailwind + Webpack + Gulp Workflow Setup...
 
 ### Installation
 
 ```
-git clone https://github.com/Creative-VMLYR/imbank-tailwind
+Step 1: git clone https://github.com/Frontendry/tailwind-webpack-gulp-setup
 
-npm i
+Step 2: npm i
 
 ```
 
 ### DLL Creation
 
-Then...
-
 ```
-npm start
+Step 3: npm start
 
 ```
 
-Note: If you're adding any extra vendors e.g JS or CSS plugins, add them on config/workflow.config.js[plugins] and rerun npm start.
+Note: If you're adding any extra vendors e.g JS or CSS plugins, add them on config/workflow.config.js[plugins] and run npm start.
 
 ### Dev Server
+Start a development environment...
 
 ```
-npm run dev
+Step 4(optional): npm run dev
 
 ```
 
-Note: If you want to add any extra js files, add them on src/assets/js directory, then reference them on config/workflow.config.js[scripts] and rerun npm run dev.
+Note: If you want to add any extra js files, add them on src/assets/js directory, then reference them on config/workflow.config.js[scripts] and run npm run dev.
 
 
 ### Production
+Create a production build
 
 ```
-npm run build
+Final Step: npm run build
 
 ```
 

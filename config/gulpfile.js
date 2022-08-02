@@ -4,12 +4,10 @@ const devBuild =
   "development";
 
 // Node Modules
-const { src, dest, watch, series, lastRun } = require("gulp");
+const { src, dest, watch, series } = require("gulp");
 const sourcemaps = devBuild ? require("gulp-sourcemaps") : null;
 const browserSync = devBuild ? require("browser-sync") : null;
 const sass = require("gulp-sass")(require("sass"));
-const dependents = require("gulp-dependents");
-const cached = require("gulp-cached");
 const postcss = require("gulp-postcss");
 const postcssAssets = require("postcss-assets");
 const gutil = require("gulp-util");
@@ -19,7 +17,6 @@ const size = require("gulp-size");
 const fs = require("fs");
 const fileinclude = require("gulp-file-include");
 const htmlbeautify = require("gulp-html-beautify");
-const purgecss = require("gulp-purgecss");
 const cleanCSS = require("gulp-clean-css");
 const tailwindcss = require("tailwindcss");
 const autoprefixer = require("autoprefixer");
@@ -141,50 +138,20 @@ const cssConfig = {
     precision: 3,
     errLogToConsole: true,
   },
-  /*  postCSS: [
-    postcssAssets({
-      loadPaths: ["imgs/"],
-      basePath: dir.buildFolder,
-    }),
-  ], */
 };
 
 // CSS Task
 function css(cb) {
-  return src(cssConfig.src, { since: lastRun(css) })
-    .pipe(cached("css"))
-    .pipe(dependents())
+  return src(cssConfig.src)
     .pipe(sourcemaps ? sourcemaps.init() : noop())
     .pipe(sass(cssConfig.sassOpts).on("error", sass.logError))
     .pipe(sourcemaps ? sourcemaps.write() : noop())
     .pipe(dest(cssConfig.cssSrcFolder))
-    .pipe(postcss([tailwindcss("../tailwind.config.js"), autoprefixer]))
+    .pipe(postcss([tailwindcss(dir.tailwindConfigSrc), autoprefixer]))
     .pipe(dest(cssConfig.buildFolder))
-    .pipe(browserSync ? browserSync.reload({ stream: true }) : noop())
-    .on("end", cb);
-}
-
-// SCSS to CSS Task
-function scssToCSSProd(cb) {
-  return src(cssConfig.src)
-    .pipe(sass(cssConfig.sassOpts).on("error", sass.logError))
-    .pipe(dest(cssConfig.buildFolder))
-    .on("end", cb);
-}
-
-function cssPurge(cb) {
-  return src(`${cssConfig.buildFolder}/core-styles.css`)
     .pipe(
-      purgecss({
-        content: [
-          `${dir.buildFolder}/*.html`,
-          `${dir.buildFolder}/assets/js/*.js`,
-        ],
-        safelist: ["theme-krajee-svg", "form-control-sm"],
-      })
+      browserSync && devBuild ? browserSync.reload({ stream: true }) : noop()
     )
-
-    .pipe(dest(cssConfig.buildFolder))
     .on("end", cb);
 }
 
@@ -295,19 +262,12 @@ function watchChanges(cb) {
 // Gulp Development Mode Series
 exports.develop = series(
   images,
-  css,
   html,
+  css,
   webpackDevAssets,
   browserSyncCall,
   watchChanges
 );
 
 // Gulp Production Mode Series
-exports.production = series(
-  images,
-  html,
-  scssToCSSProd,
-  cssPurge,
-  cssMinify,
-  webpackProdAssets
-);
+exports.production = series(webpackProdAssets, images, html, css, cssMinify);
