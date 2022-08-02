@@ -1,7 +1,7 @@
 {
-  "name": "imbank-tailwind",
+  "name": "tailwind-webpack-gulp-setup",
   "version": "1.0.0",
-  "description": "I&M Bank Website based on Tailwind CSS.",
+  "description": "Tailwind + Webpack + Gulp Workflow Setup...",
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production webpack --config config/webpack.dll.config.js",
